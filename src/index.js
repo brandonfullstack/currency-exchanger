@@ -1,21 +1,30 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
-import ExchangeRate from './exchange-rate';
+import CurrencyConversion from './exchange-rate';
 
 //Business Logic
 
-async function getRate(baseCurrency, targetCurrency, amount) {
-  const response = await Promise.all([
-    ExchangeRate.getRate(baseCurrency, targetCurrency, amount)
-  ])
-
-  calcRate(response);
+async function getResult(baseCurrency, targetCurrency, amount) {
+  const response = await CurrencyConversion.getResult(baseCurrency, targetCurrency, amount);
+  if (response) {
+    printResult(response);
+  } else {
+    printError(response);
+  }
 }
+
+// async function getRate(baseCurrency, targetCurrency, amount) {
+//   const response = await Promise.all([
+//     ExchangeRate.getRate(baseCurrency, targetCurrency, amount)
+//   ]);
+
+//   calcRate(response);
+// }
 
 //UI Logic
 
-function calcRate(response) {
+function printResult(response) {
   let convertedDiv = document.getElementById('convertedDiv');
   let inputAmount = document.getElementById("inputAmount").value;
   let convertedAmount = response.conversion_result;
@@ -25,15 +34,19 @@ function calcRate(response) {
   console.log(convertedAmount);
 }
 
-function handleFormSubmission(e) {
-  e.preventDefault();
-  let baseCurrency = document.getElementById("baseCurrency").value;
-  let targetCurrency = document.getElementById("targetCurrency").value;
-  let amount = document.getElementById("inputAmount").value;
-  getRate(baseCurrency, targetCurrency, amount);
+function printError(response) {
+  document.querySelector('#convertedDiv').innerText = `An ${response[0]['error-type']} was entered.`;
+}
+
+function handleFormSubmission(event) {
+  event.preventDefault();
+  const baseCurrency = document.getElementById("baseCurrency").value;
+  const targetCurrency = document.getElementById("targetCurrency").value;
+  const amount = document.getElementById("inputAmount").value;
+  getResult(baseCurrency, targetCurrency, amount);
 
 }
 
 window.addEventListener("load", function () {
-  document.querySelector("form").addEventListener("submit", handleFormSubmission)
-})
+  document.querySelector("form").addEventListener("submit", handleFormSubmission);
+});

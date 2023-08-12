@@ -1,14 +1,15 @@
-export default class ExchangeRate {
-  static async getRate(baseCurrency, targetCurrency, amount) {
+export default class CurrencyConversion {  
+  static async getResult(baseCurrency, targetCurrency, amount) {
     try {
-      const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.API_KEY}/pair/${baseCurrency}/${targetCurrency}/${amount}`)
+      const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.API_KEY}/pair/${baseCurrency}/${targetCurrency}/${amount}`);
+      const jsonifiedResponse = await response.json();
       if (!response.ok) {
-        const error = `${response.status} ${response.statusText}`;
-        throw new Error(error)
+        const errorMessage = `${response.status} ${response.statusText}
+        ${jsonifiedResponse.message}`;
+        throw new Error(errorMessage);
       }
-      return await response.json();
-    }
-    catch (error) {
+      return jsonifiedResponse;
+    } catch(error) {
       return error;
     }
   }
