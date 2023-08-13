@@ -7,20 +7,12 @@ import CurrencyConversion from './exchange-rate';
 
 async function getResult(baseCurrency, targetCurrency, amount) {
   const response = await CurrencyConversion.getResult(baseCurrency, targetCurrency, amount);
-  if (response) {
+  if (response.result === "success") {
     printResult(response);
   } else {
     printError(response);
   }
 }
-
-// async function getRate(baseCurrency, targetCurrency, amount) {
-//   const response = await Promise.all([
-//     ExchangeRate.getRate(baseCurrency, targetCurrency, amount)
-//   ]);
-
-//   calcRate(response);
-// }
 
 //UI Logic
 
@@ -28,14 +20,15 @@ function printResult(response) {
   let convertedDiv = document.getElementById('convertedDiv');
   let inputAmount = document.getElementById("inputAmount").value;
   let convertedAmount = response.conversion_result;
-  convertedDiv.innerText = convertedAmount;
+  const targetCurrency = document.getElementById("targetCurrency").value;
+  convertedDiv.innerText = convertedAmount + ` ${targetCurrency}`;
   console.log(response.conversion_result);
   console.log(inputAmount);
   console.log(convertedAmount);
 }
 
 function printError(response) {
-  document.querySelector('#convertedDiv').innerText = `An ${response[0]['error-type']} was entered.`;
+  document.querySelector('#convertedDiv').innerText = `An ${response['error-type']} was entered.`;
 }
 
 function handleFormSubmission(event) {
